@@ -3,17 +3,6 @@ const { comparePassword, hashPassword } = require('../helpers/hashing');
 const { generateToken } = require('../helpers/jwt');
 const handleError = require('../helpers/errorHandler');
 
-//rendering pages
-exports.renderLogin = (req, res) => {
-  res.render('login');
-};
-
-exports.renderProfile = (req, res) => {
-  res.render('profile');
-};
-
-//logic
-
 exports.loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -28,8 +17,12 @@ exports.loginUser = async (req, res) => {
     delete user._id;
     const token = await generateToken(user);
     res.cookie('tokenAuth', token);
-    res.status(302).redirect('/user/profile');
-  } catch (err) {}
+    res.status(302).json({
+      message: 'Logged in',
+    });
+  } catch (err) {
+    return handleError(err, res);
+  }
 };
 
 exports.getUsers = async (req, res) => {
